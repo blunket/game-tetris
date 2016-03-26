@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Tetris</title>
+
+    <style type="text/css">
+        #tetris{
+            outline:1px solid #AAA;
+            border:none;
+        }
+    </style>
+
+</head>
+<body>
+
+<canvas id="tetris" tabindex=0>
+Your browser doesn't support HTML5 Canvas. Try a modern browser.
+</canvas>
+
+<script src="blocks.js"></script>
+<script>
+
+var canvas = document.getElementById("tetris");
+var ctx = canvas.getContext("2d");
+
+canvas.height = blockSize * 20;
+canvas.width = blockSize * 10;
+
+var drawgrid = function() {
+    for (y = 0; y < 20; y++) {
+        for (x = 0; x < 10; x++) {
+            ctx.fillStyle = colors[grid[y][x]];
+            ctx.fillRect(blockSize * x, blockSize * y, blockSize, blockSize);
+        }
+    }
+}
+
+var pieceFns = [t_block, i_block, o_block, j_block, l_block, s_block, z_block]; // array of functions
+
+var curpiece = pieceFns[Math.floor(Math.random() * 7)]();  //run a random function from pieceFns array
+
+console.log(curpiece);
+
+</script>
+
+</body>
+</html>
