@@ -5,51 +5,51 @@ var Block = function(type, spaces, color) {
     this.type = type,
     this.spaces = spaces, //array of occupied spaces as 16 bit integers
     this.color = color,
-    this.state = 0,       //rotation. (position in spaces array)
-    this.col = 5,
-    this.row = 0
+    this.state = 0,       //rotation (position in spaces array)
+    this.col = 3,
+    this.row = -2
 }
 
 var colors = ["white", "purple", "cyan", "yellow", "blue", "orange", "green", "red"];
 
 var t_block = function() {
-    states = [0x0E40, 0x4C40, 0x4E00, 0x4640];
+    states = [0x0720, 0x2320, 0x2700, 0x2620];
     color = 1;
     return new Block ("t", states, color);
 }
 
 var i_block = function() {
-    states = [0x0F00, 0x2222, 0x00F0, 0x4444];
+    states = [0x0F00, 0x2222];
     color = 2;
     return new Block ("i", states, color);
 }
 
 var o_block = function() {
-    states = [0xCC00, 0xCC00, 0xCC00, 0xCC00];
+    states = [0x0660];
     color = 3;
     return new Block ("o", states, color);
 }
 
 var j_block = function() {
-    states = [0x44C0, 0x8E00, 0x6440, 0x0E20];
+    states = [0x0710, 0x3220, 0x4700, 0x2260];
     color = 4;
     return new Block ("j", states, color);
 }
 
 var l_block = function() {
-    states = [0x4460, 0x0E80, 0xC440, 0x2E00];
+    states = [0x0740, 0x2230, 0x1700, 0x6220];
     color = 5;
     return new Block ("l", states, color);
 }
 
 var s_block = function() {
-    states = [0x06C0, 0x8C40, 0x6C00, 0x4620];
+    states = [0x0360, 0x2310];
     color = 6;
     return new Block ("s", states, color);
 }
 
 var z_block = function() {
-    states = [0x0C60, 0x4C80, 0xC600, 0x2640];
+    states = [0x0630, 0x1320];
     color = 7;
     return new Block ("z", states, color);
 }
