@@ -35,11 +35,32 @@ var drawgrid = function() {
     }
 }
 
-var pieceFns = [t_block, i_block, o_block, j_block, l_block, s_block, z_block]; // array of functions
+var level = 0; //difficulty level, 0 - 20
 
+var pieceFns = [t_block, i_block, o_block, j_block, l_block, s_block, z_block]; // array of functions
 var curpiece = pieceFns[Math.floor(Math.random() * 7)]();  //run a random function from pieceFns array
 
-console.log(curpiece);
+var curstate = curpiece.spaces[0].toString(2);
+while (curstate.length < 16) //add preceding 0s
+    curstate = "0" + curstate;
+
+//loop through to draw the piece
+for (a = 0; a < 4; a++) {
+    for (b = 0; b < 4; b++){
+        ctx.fillStyle = curstate.charAt(a * 4 + b) == 1 ? colors[curpiece.color] : colors[0];
+        ctx.fillRect(blockSize * (b + curpiece.col), blockSize * (a + curpiece.row), blockSize, blockSize);
+    }
+}
+
+var postBlock = function() {
+    for (a = 0; a < 4; a++) {
+        for (b = 0; b < 4; b++){
+            if (curstate.charAt(a * 4 + b) == 1) {
+                grid[curpiece.row + a][curpiece.col + b] = curpiece.color;
+            }
+        }
+    }
+}
 
 </script>
 
