@@ -26,31 +26,88 @@ var ctx = canvas.getContext("2d");
 canvas.height = blockSize * 20;
 canvas.width = blockSize * 10;
 
-var drawgrid = function() {
+
+var curpiece;
+var curstate;
+
+
+//shuffle function source: http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffle(array) {  
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+
+
+/*
+    pieceFns is an array holding functions that create pieces (blocks.js)
+    
+    pieces are not generated randomly
+    instead, a sequence of 28 pieces is randomized where each block type appears 4 times in the sequence
+    after the sequence is over, a new sequence will be generated
+*/
+var pieceFns = new Array();
+
+var generateSequence = function() {
+    pieceFns = [t_block, t_block, t_block, t_block, i_block, i_block, i_block, i_block, o_block, o_block, o_block, o_block, j_block, j_block, j_block, j_block, l_block, l_block, l_block, l_block, s_block, s_block, s_block, s_block, z_block, z_block, z_block, z_block];
+    shuffle(pieceFns);
+}
+
+generateSequence();
+
+var initpiece = function() {
+    curpiece = pieceFns[0]();  //run 1st function from pieceFns
+    pieceFns.splice(0,1);
+    
+    if (pieceFns.length == 0)
+        generateSequence();
+    
+    curstate = curpiece.spaces[curpiece.state].toString(2);
+    while (curstate.length < 16) //add preceding 0s
+        curstate = "0" + curstate;
+    
+}
+
+initpiece();
+
+var drawGrid = function() {
     for (y = 0; y < 20; y++) {
         for (x = 0; x < 10; x++) {
             ctx.fillStyle = colors[grid[y][x]];
             ctx.fillRect(blockSize * x, blockSize * y, blockSize, blockSize);
         }
     }
-}
-
-var level = 0; //difficulty level, 0 - 20
-
-var pieceFns = [t_block, i_block, o_block, j_block, l_block, s_block, z_block]; // array of functions
-var curpiece = pieceFns[Math.floor(Math.random() * 7)]();  //run a random function from pieceFns array
-
-var curstate = curpiece.spaces[0].toString(2);
-while (curstate.length < 16) //add preceding 0s
-    curstate = "0" + curstate;
-
-//loop through to draw the piece
-for (a = 0; a < 4; a++) {
-    for (b = 0; b < 4; b++){
-        ctx.fillStyle = curstate.charAt(a * 4 + b) == 1 ? colors[curpiece.color] : colors[0];
-        ctx.fillRect(blockSize * (b + curpiece.col), blockSize * (a + curpiece.row), blockSize, blockSize);
+    
+    for (a = 0; a < 4; a++) {
+        for (b = 0; b < 4; b++) {
+            ctx.fillStyle = curstate.charAt(a * 4 + b) == 1 ? colors[curpiece.color] : "rgba(0,0,0,0)";
+            ctx.fillRect(blockSize * (b + curpiece.col), blockSize * (a + curpiece.row), blockSize, blockSize);
+            if (curstate.charAt(a * 4 + b) == 1){ //if current space is occupied, check for collisions
+                if ((b + curpiece.col) < 0 || (b + curpiece.col) < 0) {
+                    curpiece.col++;
+                    break;
+                } else if ((b + curpiece.col) > 9) {
+                    curpiece.col--;
+                    break;
+                }
+                if (grid[curpiece.row + a + 1][curpiece.col + b] !== 0) {
+                    postBlock(); 
+                    initpiece();
+                }
+            }
+        }
     }
+    
+    setTimeout(drawGrid, 30);
 }
+
+var level = 10; //difficulty level, 0 - 20
 
 var postBlock = function() {
     for (a = 0; a < 4; a++) {
@@ -61,6 +118,39 @@ var postBlock = function() {
         }
     }
 }
+
+var gameLoop = function() {
+    curpiece.row++;
+    setTimeout(gameLoop, 1500 - level * 60);
+}
+
+gameLoop();
+drawGrid();
+
+canvas.addEventListener("keydown", function(e){
+    switch (e.keyCode) {
+        case 37:
+            curpiece.col--;
+            break;
+        case 39:
+            curpiece.col++;
+            break;
+        case 38:
+            curpiece.state++;
+            if (curpiece.state == curpiece.spaces.length)
+                curpiece.state = 0;
+            curstate = curpiece.spaces[curpiece.state].toString(2);
+            while (curstate.length < 16) //add preceding 0s
+                curstate = "0" + curstate;
+            break;
+        case 40:
+            curpiece.row++;
+            break;
+        default:
+            console.log(e.keyCode);
+            break;
+    }
+});
 
 </script>
 
