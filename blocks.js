@@ -7,7 +7,7 @@ var Block = function(type, spaces, color) {
     this.color = color,
     this.state = 0,       //rotation (position in spaces array)
     this.col = 3,
-    this.row = -2
+    this.row = -1
 }
 
 var colors = ["white", "purple", "cyan", "yellow", "blue", "orange", "green", "red"];
@@ -57,4 +57,8 @@ var z_block = function() {
 var grid = new Array(); //create empty grid
 for (a = 0; a < 20; a++) {
     grid.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+}
+
+for (a = 0; a < 4; a++) {
+    grid.push([-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]);  //add a few rows beneath for collision detection
 }
